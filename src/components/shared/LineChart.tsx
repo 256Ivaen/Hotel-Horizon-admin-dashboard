@@ -7,8 +7,6 @@ interface DashboardData {
   sales_by_month: Array<{
     month: string;
     sales: number;
-    leads: number;
-    conversions: number;
   }>;
 }
 
@@ -18,13 +16,13 @@ interface GraphComponentProps {
   noBorder?: boolean;
 }
 
-const formatUGX = (amount: number) => {
-  if (amount >= 1000000000) {
-    return `UGX ${(amount / 1000000000).toFixed(1)}B`;
-  } else if (amount >= 1000000) {
-    return `UGX ${(amount / 1000000).toFixed(0)}M`;
+const formatUSD = (amount: number) => {
+  if (amount >= 1000000) {
+    return `$${(amount / 1000000).toFixed(1)}M`;
+  } else if (amount >= 1000) {
+    return `$${(amount / 1000).toFixed(0)}K`;
   }
-  return `UGX ${amount.toLocaleString()}`;
+  return `$${amount.toLocaleString()}`;
 };
 
 interface TooltipProps {
@@ -33,9 +31,7 @@ interface TooltipProps {
     value: number;
     payload: {
       month: string;
-      rawSales: number;
-      leads: number;
-      conversions: number;
+      sales: number;
     };
   }>;
   label?: string;
@@ -46,19 +42,11 @@ const CustomTooltip = ({ active, payload }: TooltipProps) => {
     const data = payload[0].payload;
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-lg">
-        <div className="text-sm font-bold text-gray-600 mb-1">{data.month}</div>
+        <div className="text-xs uppercase font-semibold text-gray-600 mb-1">{data.month}</div>
         <div className="space-y-1">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm font-bold">Sales:</span>
-            <div className="text-sm">{formatUGX(data.rawSales)}</div>
-          </div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-sm font-bold">Leads:</span>
-            <span className="text-xs">{data.leads}</span>
-          </div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-sm font-bold">Conversions:</span>
-            <span className="text-xs">{data.conversions}</span>
+            <span className="text-xs font-bold">Sales:</span>
+            <span className="text-xs">{formatUSD(data.sales)}</span>
           </div>
         </div>
       </div>
@@ -90,50 +78,31 @@ export default function GraphComponent({ dashboardData, loading, noBorder = fals
   
   const chartData = salesDataByMonth.map(item => ({
     month: item.month,
-    sales: item.sales / 10000000,
-    rawSales: item.sales,
-    leads: item.leads,
-    conversions: item.conversions
+    sales: item.sales,
   }));
 
   const totalSales = salesDataByMonth.reduce((sum, item) => sum + item.sales, 0);
-  const currentMonthSales = salesDataByMonth[salesDataByMonth.length - 1].sales;
-  const previousMonthSales = salesDataByMonth[salesDataByMonth.length - 2].sales;
+  const currentMonthSales = salesDataByMonth[salesDataByMonth.length - 1]?.sales || 0;
+  const previousMonthSales = salesDataByMonth[salesDataByMonth.length - 2]?.sales || 0;
   const growthPercentage = previousMonthSales > 0 
     ? ((currentMonthSales - previousMonthSales) / previousMonthSales) * 100 
     : 0;
-  const highValue = Math.max(...salesDataByMonth.map(d => d.sales));
-  const lowValue = Math.min(...salesDataByMonth.filter(d => d.sales > 0).map(d => d.sales));
-  const averageSales = totalSales / salesDataByMonth.length;
 
-  const primaryColor = '#dc2626';
+  // Calculate min and max for YAxis domain
+  const maxSales = Math.max(...salesDataByMonth.map(d => d.sales));
+  const minSales = Math.min(...salesDataByMonth.map(d => d.sales));
+  const yAxisMax = Math.ceil(maxSales * 1.1 / 1000) * 1000;
+  const yAxisMin = Math.max(0, Math.floor(minSales * 0.9 / 1000) * 1000);
+
+  const primaryColor = '#5b3b18';
   const secondaryColor = '#fbbf24';
 
   return (
     <div className="w-full">
-      <div>
-        <div className="mb-5">
-          <h1 className="text-xs text-gray-600 font-light mb-1">Monthly Sales Performance</h1>
-          <div className="flex flex-wrap justify-between">
-          <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-3.5">
-            <span className="text-2xl font-bold text-gray-900">{formatUGX(currentMonthSales)}</span>
-          </div>
-
-          <div className="flex items-center justify-between flex-wrap gap-2.5 text-sm mb-2.5">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-600 text-xs">This Month:</span>
-                <span className="font-semibold text-xs text-gray-900">{formatUGX(currentMonthSales)}</span>
-                <div className={`flex items-center gap-1 ${growthPercentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  <TrendingUp className={`w-3 h-3 ${growthPercentage < 0 ? 'rotate-180' : ''}`} />
-                  <span>({growthPercentage >= 0 ? '+' : ''}{growthPercentage.toFixed(1)}%)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>
+      <div className="mb-5">
+          <h1 className="text-xs text-black font-semibold font-light mb-1">Monthly Sales Performance</h1>
         </div>
-
+      <div className='p-4 rounded-lg border border-primary'>
         <div className="grow">
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -173,8 +142,9 @@ export default function GraphComponent({ dashboardData, loading, noBorder = fals
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fill: "#6b7280" }}
-                  tickFormatter={(value) => `UGX ${(value * 10).toFixed(0)}M`}
+                  tickFormatter={(value) => formatUSD(value)}
                   tickMargin={10}
+                  domain={[yAxisMin, yAxisMax]}
                 />
 
                 <Tooltip

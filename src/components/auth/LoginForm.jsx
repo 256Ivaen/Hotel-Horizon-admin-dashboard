@@ -89,72 +89,113 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="text-center mb-6">
-        <div className="flex justify-center mb-4">
-          <img 
-            className="h-12 w-auto" 
-            src={assets.logo}
-            alt="Logo" 
-          />
+    <main className="min-h-screen w-full grid lg:grid-cols-2">
+      <div className="hidden lg:block relative h-screen bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${assets.LoginImg})`,
+        }}
+      >
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative z-10 h-full flex flex-col justify-between p-12 text-white">
+          <div>
+            <img className="h-32 w-auto mb-4" src={assets.logo} alt="Logo" />
+          </div>
+          <blockquote className="space-y-2 max-w-md">
+            <p className="text-sm italic text-white/90">
+              "Experience the perfect blend of luxury and comfort at Hotel Horizon. Where every stay becomes a memory."
+            </p>
+            <footer className="text-sm text-white/70">- Hotel Horizon Management</footer>
+          </blockquote>
         </div>
       </div>
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <div className="relative">
-            <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
-            <input
-              type="email"
-              className="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-              placeholder="Email Address"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+      <div className="flex items-center justify-center p-8 lg:p-12 bg-white min-h-screen">
+        <div className="w-full max-w-md">
+          <div className="flex items-center justify-center gap-2 mb-8 lg:hidden">
+            <img className="h-8 w-auto" src={assets.logo} alt="Logo" />
+            <p className="text-xl font-semibold">Hotel Horizon</p>
+          </div>
+
+          <div >
+            <div className="text-start mb-4">
+              <h1 className="text-2xl font-light text-gray-900 mb-2">Welcome Back</h1>
+              <p className="text-sm text-gray-600">Sign in to access your dashboard</p>
+            </div>
+
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-xs text-red-600">{error}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-black">Email Address</label>
+                <div className="relative">
+                  <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input
+                    type="email"
+                    placeholder="your.email@example.com"
+                    className="w-full pl-10 pr-3 py-2.5 text-xs border border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900 placeholder:text-gray-400"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Password Input */}
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-black">Password</label>
+                <div className="relative">
+                  <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    className="w-full pl-10 pr-10 py-2.5 text-xs border border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-black placeholder:text-gray-400"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 px-4 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Signing in...
+                  </span>
+                ) : (
+                  'Sign In'
+                )}
+              </button>
+            </form>
+
+            <p className="text-xs text-gray-500 text-center mt-6">
+              By signing in, you agree to our{' '}
+              <a href="#" className="text-primary hover:underline">Terms</a>
+              {' '}and{' '}
+              <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+            </p>
           </div>
         </div>
-
-        <div>
-          <div className="relative">
-            <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
-            <input
-              type={showPassword ? "text" : "password"}
-              className="w-full pl-9 pr-10 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400 bg-white text-gray-900 placeholder:text-gray-400"
-              placeholder="Password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-            >
-              {showPassword ? <FiEyeOff size={14} /> : <FiEye size={14} />}
-            </button>
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 px-4 bg-primary text-white text-xs font-normal uppercase tracking-wide rounded-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Signing in...
-            </span>
-          ) : (
-            'Sign In'
-          )}
-        </button>
-      </form>
-    </div>
+      </div>
+    </main>
   );
 };
 

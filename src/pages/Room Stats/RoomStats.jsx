@@ -337,10 +337,10 @@ const RoomAnalytics = () => {
               >
                 <span
                   className={`
-                    w-full h-full flex items-center justify-center text-xs md:text-sm font-medium
+                    w-full h-full flex items-center justify-center text-xs font-semibold uppercase
                     ${activeTab === index 
-                      ? isDarkMode ? 'text-gray-100' : 'text-gray-900'
-                      : isDarkMode ? 'text-gray-500' : 'text-gray-400'
+                      ? isDarkMode ? 'text-gray-200' : 'text-white'
+                      : isDarkMode ? 'text-green-500' : 'text-gray-400'
                     }
                   `}
                 >

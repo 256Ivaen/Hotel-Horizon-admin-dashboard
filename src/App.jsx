@@ -9,6 +9,8 @@ import ReservationsPage from "./pages/Reservations/Reservations";
 import { isLoggedIn, logout } from "./utils/service";
 import RoomAnalytics from "./pages/Room Stats/RoomStats";
 import WebsiteAnalytics from "./pages/WebsiteAnalytics/WebsiteAnalytics";
+import UsersManagement from "./pages/System Users/Users";
+import SettingsPage from "./pages/Account Settings/Settings";
 
 const isAuthenticated = () => {
   return isLoggedIn();
@@ -87,6 +89,8 @@ const App = () => {
             <Route path="reservations" element={<ReservationsPage />} />
             <Route path="room-analytics" element={<RoomAnalytics />} />
             <Route path="website-analytics" element={<WebsiteAnalytics />} />
+            <Route path="system-users" element={<UsersManagement />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage darkMode={darkMode} />} />
         </Routes>
