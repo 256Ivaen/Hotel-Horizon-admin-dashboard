@@ -1,0 +1,20 @@
+import React from 'react';
+
+const Textarea = ({ label, className = '', ...props }) => {
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+          {props.required && <span className="text-red-500"> *</span>}
+        </label>
+      )}
+      <textarea
+        className={`block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary ${className}`}
+        {...props}
+      />
+    </div>
+  );
+};
+
+export default Textarea;
