@@ -1,5 +1,6 @@
 // Navbar.jsx
 import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LogOut,
@@ -17,6 +18,8 @@ import { IoSettingsOutline } from "react-icons/io5";
 import React from "react";
 import { assets } from "../../assets/assets";
 import { getCurrentUser, logout } from "../../utils/service";
+
+const MotionLink = motion(Link);
 
 const Navbar = ({ isMobileOpen = false, onMobileClose, onMobileOpen }) => {
   const location = useLocation();
@@ -142,18 +145,37 @@ const Navbar = ({ isMobileOpen = false, onMobileClose, onMobileOpen }) => {
             const Icon = item.icon;
             const active = isActive(item.href);
             return (
-              <Link
+              <MotionLink
                 key={item.href}
                 to={item.href}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
+                whileTap={{ scale: 0.97 }}
+                className={`flex items-center px-3 py-2 rounded-full transition-colors duration-200 h-10 min-w-[44px] ${
                   active
-                    ? "bg-white text-black"
-                    : "text-white hover:bg-white/10"
+                    ? "bg-white/20 text-white"
+                    : "text-white/70 hover:bg-white/10"
                 }`}
+                aria-label={item.label}
               >
-                <Icon className={`w-4 h-4 ${active ? "text-black" : "text-white"}`} />
-                <span className="text-xs font-medium">{item.label}</span>
-              </Link>
+                <Icon className="w-[18px] h-[18px] shrink-0 transition-colors duration-200" />
+                <motion.div
+                  initial={false}
+                  animate={{
+                    maxWidth: active ? "200px" : "0px",
+                    opacity: active ? 1 : 0,
+                    marginLeft: active ? "8px" : "0px",
+                  }}
+                  transition={{
+                    maxWidth: { type: "spring", stiffness: 350, damping: 32 },
+                    opacity: { duration: 0.19 },
+                    marginLeft: { duration: 0.19 },
+                  }}
+                  className="overflow-hidden flex items-center"
+                >
+                  <span className="font-medium text-xs whitespace-nowrap select-none text-white">
+                    {item.label}
+                  </span>
+                </motion.div>
+              </MotionLink>
             );
           })}
         </div>
